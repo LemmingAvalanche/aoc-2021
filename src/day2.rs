@@ -2,22 +2,28 @@ use regex::Regex;
 
 use Dir::*;
 
-#[derive(Debug)]
 struct Command {
     dir: Dir,
     value: u32,
 }
 
-#[derive(Debug)]
 enum Dir {
     Up,
     Down,
     Forward,
 }
 
+/// for part 1
 struct Navigation {
     horiz: u32,
     depth: u32,
+}
+
+/// for part 2
+struct Navigation2 {
+    horiz: u32,
+    depth: u32,
+    aim: u32,
 }
 
 impl Navigation {
@@ -38,6 +44,39 @@ impl Navigation {
             Forward => Navigation {
                 horiz: self.horiz + command.value,
                 depth: self.depth,
+            },
+        }
+    }
+    fn result(self) -> u32 {
+        self.horiz * self.depth
+    }
+}
+
+impl Navigation2 {
+    fn new() -> Self {
+        Navigation2 {
+            horiz: 0,
+            depth: 0,
+            aim: 0,
+        }
+    }
+
+    fn nav(self, command: Command) -> Self {
+        match command.dir {
+            Up => Navigation2 {
+                horiz: self.horiz,
+                depth: self.depth,
+                aim: self.aim - command.value,
+            },
+            Down => Navigation2 {
+                horiz: self.horiz,
+                depth: self.depth,
+                aim: self.aim + command.value,
+            },
+            Forward => Navigation2 {
+                horiz: self.horiz + command.value,
+                depth: self.depth + (self.aim * command.value),
+                aim: self.aim,
             },
         }
     }
@@ -87,6 +126,10 @@ pub fn solve_part1(input: &str) -> u32 {
         .result()
 }
 
-// pub fn solve_part2(input: &str) -> u32 {
-
-// }
+pub fn solve_part2(input: &str) -> u32 {
+    input
+        .lines()
+        .map(|l| Command::from_str(l))
+        .fold(Navigation2::new(), |acc, c| acc.nav(c))
+        .result()
+}
