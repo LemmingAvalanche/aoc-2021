@@ -12,7 +12,7 @@ struct Command {
 enum Dir {
     Up,
     Down,
-    Forward
+    Forward,
 }
 
 struct Navigation {
@@ -27,9 +27,18 @@ impl Navigation {
 
     fn nav(self, command: Command) -> Self {
         match command.dir {
-            Up => Navigation { horiz: self.horiz, depth: self.depth - command.value },
-            Down => Navigation { horiz: self.horiz, depth: self.depth + command.value },
-            Forward => Navigation { horiz: self.horiz + command.value, depth: self.depth },
+            Up => Navigation {
+                horiz: self.horiz,
+                depth: self.depth - command.value,
+            },
+            Down => Navigation {
+                horiz: self.horiz,
+                depth: self.depth + command.value,
+            },
+            Forward => Navigation {
+                horiz: self.horiz + command.value,
+                depth: self.depth,
+            },
         }
     }
     fn result(self) -> u32 {
@@ -46,11 +55,20 @@ impl Command {
         }
 
         if let Some(num) = RE_U.captures(input) {
-            Command { dir: Up, value: try_parse_int(&num[1]) }
+            Command {
+                dir: Up,
+                value: try_parse_int(&num[1]),
+            }
         } else if let Some(num) = RE_D.captures(input) {
-            Command { dir: Down, value: try_parse_int(&num[1]) }
+            Command {
+                dir: Down,
+                value: try_parse_int(&num[1]),
+            }
         } else if let Some(num) = RE_F.captures(input) {
-            Command { dir: Forward, value: try_parse_int(&num[1]) }
+            Command {
+                dir: Forward,
+                value: try_parse_int(&num[1]),
+            }
         } else {
             panic!("bad input")
         }
